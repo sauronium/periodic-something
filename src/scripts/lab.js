@@ -642,7 +642,8 @@ const Scene3D = (() => {
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
   const dprOf = () => Math.min(window.devicePixelRatio || 1, 2);
-  const PAGE_EL = clamp(+document.body.dataset.element || 26, 1, 118);
+  // Element pages open on their own element; the home page opens on the random element the preloader showed.
+  const PAGE_EL = clamp(+document.body.dataset.element || +window.__ptlPre || 1 + Math.floor(Math.random() * 118), 1, 118);
   const S = { sel: 0, view: "atom", T: 298, mode: "cat", cat: null, q: "", formula: null, M: 0, hoverZ: 0,
     theme: store.get("theme", "paper"), render: store.get("render", "3d"), wobble: store.get("wobble", true),
     trend: store.get("trend", "en"), nb: store.get("nb", "trends"), pins: store.get("pins", []), notes: store.get("notes", {}),
