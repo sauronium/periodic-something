@@ -115,16 +115,26 @@ after `npm install` to add their WebAssembly builds, which Astro then uses autom
 
 ## Deploying
 
-Every page is pre-rendered; only the contact form runs on the server, so the site needs a Node host:
+Every page is pre-rendered; only the contact form runs on the server.
+
+### Vercel (production)
+
+The site is hosted on Vercel. `astro.config.mjs` switches to the `@astrojs/vercel` adapter automatically when
+Vercel builds it, so the pages are served as static files and the contact form runs as a serverless function.
+
+1. Import the repo in Vercel. Framework preset: **Astro**. Build command: `npm run build`. Leave the output
+   directory empty (do not set it to `dist`).
+2. Use Node.js 22 or newer (Project → Settings → General → Node.js Version).
+3. Add the variables from `.env.example` under Project → Settings → Environment Variables, then redeploy.
+
+### Any Node host
+
+Without Vercel, the build uses the Node adapter and runs as a small server:
 
 ```bash
 npm ci && npm run build
-npm start            # serves dist/ on PORT (default 4321)
+npm start            # serves dist/ on PORT (default 4321), reading .env
 ```
-
-Run it behind a reverse proxy or on a platform such as Render, Railway or a VPS, and point the domain at it.
-For Vercel or Netlify, swap `@astrojs/node` in `astro.config.mjs` for that platform's adapter and set the
-environment variables in its dashboard.
 
 ---
 

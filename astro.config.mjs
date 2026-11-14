@@ -2,7 +2,12 @@
 import { defineConfig, envField } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import node from "@astrojs/node";
+import vercel from "@astrojs/vercel";
 import { SITE } from "./src/config/site.js";
+
+// Vercel sets VERCEL=1 during its builds: use its adapter there, and the Node server everywhere else
+// (local `npm run preview` / `npm start`, or any Node host).
+const onVercel = !!process.env.VERCEL;
 
 export default defineConfig({
   site: SITE.url,
@@ -10,7 +15,7 @@ export default defineConfig({
   build: { format: "directory" },
   // Pages are pre-rendered at build time; only /api/contact runs on the server (it sends email).
   output: "static",
-  adapter: node({ mode: "standalone" }),
+  adapter: onVercel ? vercel() : node({ mode: "standalone" }),
   // Contact form settings. "secret" values are read at runtime and are never bundled into the output.
   env: {
     schema: {

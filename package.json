@@ -16,6 +16,7 @@
   "dependencies": {
     "@astrojs/node": "^11.1.13",
     "@astrojs/sitemap": "^3.7.5",
+    "@astrojs/vercel": "^11.0.22",
     "@fontsource/caveat": "^5.3.0",
     "@fontsource/courier-prime": "^5.3.0",
     "@fontsource/patrick-hand": "^5.3.0",
@@ -25,5 +26,8 @@
   },
   "devDependencies": {
     "sharp": "^0.35.5"
+  },
+  "engines": {
+    "node": ">=22.23.4"
   }
 }
