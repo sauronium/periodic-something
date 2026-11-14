@@ -1,0 +1,17 @@
+---
+// Pencil toolbar, toast and print area used by the lab.
+---
+<div class="drawbar sheet" id="drawbar" hidden>
+  <button class="segb" type="button" data-tool="pen" aria-pressed="true" data-tip="Draw thin pencil lines">Pencil</button>
+  <button class="segb" type="button" data-tool="hi" aria-pressed="false" data-tip="Mark things with a see-through highlighter">Highlighter</button>
+  <button class="segb" type="button" data-tool="er" aria-pressed="false" data-tip="Rub out whole strokes you touch">Eraser</button>
+  <button class="sw" type="button" data-col="ink" aria-pressed="true" aria-label="Graphite" data-tip="Graphite pencil" style="background:var(--ink)"></button>
+  <button class="sw" type="button" data-col="red" aria-pressed="false" aria-label="Red" data-tip="Red pencil" style="background:var(--sk-red)"></button>
+  <button class="sw" type="button" data-col="blue" aria-pressed="false" aria-label="Blue" data-tip="Blue pencil" style="background:var(--sk-blue)"></button>
+  <button class="sw" type="button" data-col="green" aria-pressed="false" aria-label="Green" data-tip="Green pencil" style="background:var(--sk-green)"></button>
+  <button class="btn" type="button" id="dundo" data-tip="Take back the last stroke">Undo</button>
+  <button class="btn" type="button" id="dclear" data-tip="Clear drawings on the table and this element's view">Clear</button>
+  <button class="btn primary" type="button" id="ddone" data-tip="Stop drawing (Esc)">Done</button>
+</div>
+<div class="toast sheet" id="toast" hidden></div>
+<div id="printArea"></div>

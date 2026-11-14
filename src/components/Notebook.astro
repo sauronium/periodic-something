@@ -1,0 +1,123 @@
+---
+// Notebook pages: trends, molar mass, equations, compare, quiz, timeline, print.
+---
+<section class="notebook" aria-label="Notebook">
+        <div class="nb-tabs" role="tablist" aria-label="Notebook pages">
+          <button class="nb-tab" role="tab" data-pg="trends" style="--tc:210" aria-selected="true" data-tip="Chart a property against atomic number">Trends</button>
+          <button class="nb-tab" role="tab" data-pg="states" style="--tc:95" aria-selected="false" data-tip="Solid, liquid and gas ranges of every element; drag to change the temperature">States</button>
+          <button class="nb-tab" role="tab" data-pg="nuclides" style="--tc:300" aria-selected="false" data-tip="Chart of nuclides: isotopes along each row, isobars along the diagonals">Isotopes</button>
+          <button class="nb-tab" role="tab" data-pg="molar" style="--tc:45" aria-selected="false" data-tip="Molar mass, mole conversions and formulas from percentages">Molar mass</button>
+          <button class="nb-tab" role="tab" data-pg="equation" style="--tc:15" aria-selected="false" data-tip="Balance a chemical equation">Equations</button>
+          <button class="nb-tab" role="tab" data-pg="compare" style="--tc:130" aria-selected="false" data-tip="Pinned elements side by side, with sizes to scale">Compare</button>
+          <button class="nb-tab" role="tab" data-pg="quiz" style="--tc:340" aria-selected="false" data-tip="Quizzes, a timed challenge and flashcards">Quiz</button>
+          <button class="nb-tab" role="tab" data-pg="timeline" style="--tc:265" aria-selected="false" data-tip="Watch the table fill in as elements were discovered">Timeline</button>
+          <button class="nb-tab" role="tab" data-pg="print" style="--tc:180" aria-selected="false" data-tip="Print flashcards, a worksheet or this element's page">Print</button>
+        </div>
+        <div class="nb-sheet sheet ruled">
+          <div class="nb-page" id="pg-trends" role="tabpanel">
+            <div class="nb-head">
+              <h3 id="trendTitle">Periodic trends</h3>
+              <label class="field"><span>Plot</span>
+                <select id="trendProp" data-tip="Choose the property to chart">
+                  <option value="en">Electronegativity</option>
+                  <option value="rad">Atomic radius</option>
+                  <option value="mass">Atomic mass</option>
+                  <option value="dens">Density</option>
+                  <option value="melt">Melting point</option>
+                  <option value="boil">Boiling point</option>
+                  <option value="ie">Ionization energy</option>
+                  <option value="ea">Electron affinity</option>
+                  <option value="crust">Crust abundance</option>
+                  <option value="year">Year discovered</option>
+                </select></label>
+            </div>
+            <div class="trendbox"><canvas id="trend" aria-label="Line chart of the chosen property against atomic number"></canvas></div>
+            <p class="muted" id="trendNote"></p>
+          </div>
+          <div class="nb-page" id="pg-states" role="tabpanel" hidden>
+            <div class="nb-head"><h3>States of matter</h3><p class="muted">Drag up or down on the chart to change the temperature. Click a column to open that element.</p></div>
+            <div class="stkey"><span><i class="sd solid"></i>solid</span><span><i class="sd liquid"></i>liquid</span><span><i class="sd gas"></i>gas</span><span><i class="sd unknown"></i>not measured</span><span class="muted">Temperature uses a square-root scale so the cold end is readable.</span></div>
+            <div class="trendbox"><canvas id="stchart" aria-label="Chart of solid, liquid and gas temperature ranges for all 118 elements, with the current temperature marked"></canvas></div>
+            <p id="stnote"></p>
+          </div>
+          <div class="nb-page" id="pg-nuclides" role="tabpanel" hidden>
+            <div class="nb-head"><h3>Isotopes and isobars</h3>
+              <div class="seg" role="group" aria-label="Chart zoom">
+                <button class="segb" type="button" id="nuczc" aria-pressed="true" data-tip="Zoom in around the selected nucleus, with every cell labelled">Close-up</button>
+                <button class="segb" type="button" id="nucza" aria-pressed="false" data-tip="Show the whole chart, from hydrogen to oganesson">Whole chart</button>
+              </div>
+            </div>
+            <div class="stkey"><span><i class="sd nk-stable"></i>stable</span><span><i class="sd nk-long"></i>lasts billions of years</span><span><i class="sd nk-bm"></i>β⁻ decay</span><span><i class="sd nk-bp"></i>β⁺ decay</span><span><i class="sd nk-a"></i>α decay</span>
+              <span class="muted">Row = isotopes (same Z) · diagonal = isobars (same A) · decay modes are a simplified model</span></div>
+            <div class="trendbox"><canvas id="nucchart" aria-label="Chart of nuclides: protons against neutrons, with the selected element's isotopes and isobars highlighted"></canvas></div>
+            <p id="nucpage"></p>
+            <div class="nuclists" id="nuclists">
+              <section aria-labelledby="isoH">
+                <h4 class="subhead" id="isoH">Isotopes</h4>
+                <p class="muted nucdef">Same element, so the same number of protons (Z). Only the neutrons (N) change.</p>
+                <div class="nuctwrap"><table class="grid nuct" id="isotab"></table></div>
+              </section>
+              <section aria-labelledby="isobH">
+                <h4 class="subhead" id="isobH">Isobars</h4>
+                <p class="muted nucdef">Different elements with the same mass number (A = Z + N).</p>
+                <div class="nuctwrap"><table class="grid nuct" id="isobtab"></table></div>
+              </section>
+            </div>
+          </div>
+          <div class="nb-page" id="pg-molar" role="tabpanel" hidden>
+            <div class="nb-head"><h3>Molar mass calculator</h3></div>
+            <div class="fx-row">
+              <label class="field"><span>Formula</span><input id="fx" type="text" placeholder="e.g. H2SO4" autocomplete="off" spellcheck="false"></label>
+              <div class="ex" id="fxex"></div>
+            </div>
+            <div id="fxout"></div>
+            <div id="convbox"></div>
+            <h4 class="subhead">Formula from percentages</h4>
+            <p class="muted">Know the percent by mass of each element? Get the simplest (empirical) formula, and the real (molecular) formula if you add the molar mass.</p>
+            <div class="fx-row">
+              <label class="field"><span>Percent by mass</span><input id="pc" type="text" placeholder="C 40, H 6.7, O 53.3" autocomplete="off" spellcheck="false" style="width:min(320px,100%)"></label>
+              <label class="field"><span>Molar mass (optional)</span><input id="pcm" type="text" inputmode="decimal" placeholder="180" style="width:120px"></label>
+              <div class="ex" id="pcex"></div>
+            </div>
+            <div id="pcout"></div>
+          </div>
+          <div class="nb-page" id="pg-equation" role="tabpanel" hidden>
+            <div class="nb-head"><h3>Equation balancer</h3></div>
+            <label class="field"><span>Unbalanced equation</span><input id="eq" type="text" placeholder="Fe + O2 -> Fe2O3" autocomplete="off" spellcheck="false"></label>
+            <div class="ex" id="eqex"></div>
+            <div id="eqout"></div>
+          </div>
+          <div class="nb-page" id="pg-compare" role="tabpanel" hidden>
+            <div class="nb-head"><h3>Compare elements</h3><button class="btn" id="cmpclear" type="button">Clear all</button></div>
+            <div id="cmpout"></div>
+          </div>
+          <div class="nb-page" id="pg-quiz" role="tabpanel" hidden>
+            <div class="nb-head"><h3>Pop quiz</h3>
+              <div class="qopts">
+                <label class="field"><span>Mode</span><select id="qmode"><option value="find">Find on the table</option><option value="timed">Timed: 60 seconds</option><option value="cards">Flashcards</option></select></label>
+                <label class="field" id="qcountf"><span>Questions</span><select id="qcount"><option>5</option><option selected>10</option><option>20</option></select></label>
+                <label class="field" id="qdeckf" hidden><span>Deck</span><select id="qdeck"><option value="20">First 20 elements</option><option value="36" selected>First 36</option><option value="56">First 56</option><option value="118">All 118</option></select></label>
+              </div>
+            </div>
+            <div id="quizout"></div>
+          </div>
+          <div class="nb-page" id="pg-timeline" role="tabpanel" hidden>
+            <div class="nb-head"><h3>Discovery timeline</h3><button class="btn" id="tlplay" type="button">Play</button></div>
+            <div class="tlrow"><input id="tl" type="range" min="1600" max="2010" step="1" value="2010" aria-label="Year"><output id="tlout" for="tl"></output></div>
+            <canvas id="tlchart" aria-label="Number of known elements over time"></canvas>
+            <p id="tlnote"></p>
+          </div>
+          <div class="nb-page" id="pg-print" role="tabpanel" hidden>
+            <div class="nb-head"><h3>Print</h3></div>
+            <p>Print, or save as PDF from your browser's print window.</p>
+            <div class="ex">
+              <button class="btn" type="button" data-print="cards-36">Flashcards: first 36</button>
+              <button class="btn" type="button" data-print="cards-all">Flashcards: all 118</button>
+              <button class="btn" type="button" data-print="cards-pinned">Flashcards: pinned elements</button>
+              <button class="btn" type="button" data-print="worksheet">Blank table worksheet</button>
+              <button class="btn" type="button" data-print="page">This element's page</button>
+            </div>
+            <p class="muted">Flashcards print 12 to a page with cutting lines. The worksheet is an empty table with atomic numbers for filling in symbols, plus a few questions.</p>
+          </div>
+        </div>
+      </section>

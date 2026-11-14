@@ -1,0 +1,214 @@
+/* Layout stability, full-screen simulation, temperature states, tooltips and the hover card. */
+
+/* ---------- Layout stability ---------- */
+/* Rows never shrink below their content, so the stage can't spill over the controls when the panel is shorter than its content. */
+.panel-sheet { grid-auto-rows: max-content; align-content: start; }
+.panel-sheet > * { min-width: 0; }
+@media (min-width: 900px) { .nb-sheet { min-height: 640px; } }
+.simbox { display: grid; gap: 10px; }
+.simmain, .simside { display: grid; gap: 10px; min-width: 0; align-content: start; }
+.simtop { justify-content: space-between; }
+.maxbtn { display: inline-flex; align-items: center; gap: 6px; }
+.maxbtn svg { width: 16px; height: 16px; }
+.stagecap { font: 400 12px/22px var(--f-mono); color: var(--ink-2); height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: -4px; }
+.simmain:has(.stage[data-mode="sketch"]) .stagecap { font: 700 16px/22px var(--f-hand); color: var(--ink); }
+.stagenote { margin: -2px 0 0; font: 400 13.5px/1.35 var(--f-body); color: var(--ink-2); min-height: calc(1.35em * 3); }
+.ctxbox { display: grid; gap: 8px; align-content: start; padding: 10px 12px; border: 1.4px dashed var(--line); border-radius: 6px 3px 7px 4px; min-height: 148px; }
+.key3d { min-height: 2.9em; align-content: flex-start; }
+.latstate { display: inline; }
+.latinfo { flex: 1 1 100%; font-size: 13.5px; line-height: 1.35; }
+.sd { display: inline-block; width: 10px; height: 10px; border-radius: 50% 42% 55% 46%; border: 1px solid var(--tile-edge); margin-right: 5px; vertical-align: -1px; flex: none; }
+.sd.solid { background: var(--st-solid); } .sd.liquid { background: var(--st-liquid); } .sd.gas { background: var(--st-gas); } .sd.unknown { background: var(--st-unknown); }
+
+/* ---------- Temperature: slider marks, live counts, tile flashes ---------- */
+.temp-row { padding-bottom: 12px; }
+.trk { position: relative; flex: 1; min-width: 120px; display: flex; }
+.trk input[type=range] { width: 100%; }
+.tmark { position: absolute; top: 21px; transform: translateX(-50%); width: 18px; height: 15px; padding: 0; border: 0; background: none; font: 700 12px/1 var(--f-hand); color: var(--ink); cursor: pointer; }
+.tmark::before { content: ""; position: absolute; left: 50%; top: -6px; border: 4px solid transparent; border-bottom: 5px solid currentColor; transform: translateX(-50%); }
+.tm-melt { color: var(--st-liquid); } .tm-boil { color: var(--sk-gold); }
+.tempnews { display: flex; gap: 4px 12px; align-items: center; min-height: 22px; overflow: hidden; white-space: nowrap; max-width: 100%; }
+.tn { display: inline-flex; align-items: center; font: 400 12.5px var(--f-mono); }
+.tn-news { overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+.tn-chg + .tn-chg { margin-left: 8px; }
+.tile .chg { position: absolute; right: -7px; top: -9px; font-size: 15px; line-height: 1; opacity: 0; pointer-events: none; z-index: 2; }
+.tile.chg-melt { --chgc: var(--st-liquid); } .tile.chg-boil { --chgc: var(--sk-gold); } .tile.chg-freeze { --chgc: var(--st-solid); } .tile.chg-cond { --chgc: var(--sk-blue); }
+.tile.chg-melt, .tile.chg-boil, .tile.chg-freeze, .tile.chg-cond { animation: chgflash 1.6s ease-out; z-index: 2; }
+.tile.chg-melt .chg, .tile.chg-boil .chg, .tile.chg-freeze .chg, .tile.chg-cond .chg { animation: chgpop 1.6s ease-out; }
+@keyframes chgpop { 0% { opacity: 0; transform: scale(.4); } 15% { opacity: 1; transform: scale(1.3); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: translateY(-6px); } }
+@keyframes chgflash { 0% { box-shadow: 0 0 0 0 var(--chgc); } 20% { box-shadow: 0 0 0 4px var(--chgc); } 100% { box-shadow: 0 0 0 0 transparent; } }
+@media (prefers-reduced-motion: reduce) {
+  .tile.chg-melt, .tile.chg-boil, .tile.chg-freeze, .tile.chg-cond { animation: none; box-shadow: 0 0 0 3px var(--chgc); }
+  .tile.chg-melt .chg, .tile.chg-boil .chg, .tile.chg-freeze .chg, .tile.chg-cond .chg { animation: none; opacity: 1; }
+}
+
+/* ---------- Phase strip in the element panel ---------- */
+.phase { display: grid; gap: 4px; }
+.phasebar { position: relative; height: 22px; border: 1.5px solid var(--ink); border-radius: 3px; cursor: pointer; background: var(--paper-2); margin-bottom: 16px; touch-action: none; }
+.pseg { position: absolute; top: 0; bottom: 0; }
+.pseg.solid { background: var(--st-solid); } .pseg.liquid { background: var(--st-liquid); } .pseg.gas { background: var(--st-gas); }
+.pseg.unknown { background: repeating-linear-gradient(-45deg, var(--st-unknown) 0 2px, transparent 2px 6px); }
+.ptick { position: absolute; top: 100%; width: 1px; height: 5px; background: var(--ink-2); }
+.ptick small { position: absolute; top: 5px; left: 0; transform: translateX(-50%); font: 10px var(--f-mono); color: var(--ink-2); white-space: nowrap; }
+.pnow { position: absolute; top: -6px; bottom: -6px; width: 3px; margin-left: -1.5px; background: var(--sk-red); border-radius: 2px; box-shadow: 0 0 0 1.5px var(--paper); pointer-events: none; }
+.phaselabels { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13.5px; color: var(--ink-2); min-height: 1.4em; }
+.phaselabels span { display: inline; }
+
+/* ---------- States notebook page ---------- */
+.stkey { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; align-items: center; }
+.stkey span { display: inline-flex; align-items: center; }
+#stchart { display: block; width: 100%; height: 360px; touch-action: none; cursor: ns-resize; }
+#stnote { min-height: 5.6em; line-height: 1.5; }
+
+/* ---------- Full-screen simulation ---------- */
+dialog.simmodal { width: calc(100vw - 24px); height: calc(100vh - 24px); max-width: none; max-height: none; padding: 0; border: 1.5px solid var(--ink); color: var(--ink); overflow: hidden; }
+dialog.simmodal[open] { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+dialog.simmodal::backdrop { background: rgba(40, 30, 10, .5); }
+:root[data-theme="chalk"] dialog.simmodal::backdrop { background: rgba(0, 0, 0, .65); }
+.simmodal-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1.5px dashed var(--line); }
+.simmodal-head h2 { margin: 0; font: 700 1.7rem/1 var(--f-hand); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.simslot { min-height: 0; padding: 12px 14px 14px; overflow: auto; }
+.simslot .simbox { height: 100%; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; }
+.simslot .simmain { grid-template-rows: auto auto auto minmax(0, 1fr) auto; min-height: 0; height: 100%; }
+.simslot .stage { aspect-ratio: auto; height: 100%; min-height: 260px; }
+.simslot .simside { overflow: auto; min-height: 0; }
+@media (max-width: 860px) {
+  .simslot .simbox { grid-template-columns: minmax(0, 1fr); height: auto; }
+  .simslot .simmain { height: auto; grid-template-rows: none; }
+  .simslot .stage { height: 62vh; }
+}
+
+/* ---------- Tooltips ---------- */
+.tip { position: fixed; z-index: 300; max-width: min(280px, calc(100vw - 16px)); padding: 6px 10px 7px; background: var(--paper); color: var(--ink);
+  border: 1.4px solid var(--ink); border-radius: 5px 3px 6px 4px; font: 400 14px/1.3 var(--f-body); box-shadow: 2px 3px 0 var(--shadow); pointer-events: none; }
+.tip::after { content: ""; position: absolute; left: var(--ax, 50%); bottom: -6px; width: 9px; height: 9px; background: var(--paper);
+  border-right: 1.4px solid var(--ink); border-bottom: 1.4px solid var(--ink); transform: translateX(-50%) rotate(45deg); }
+.tip[data-below="true"]::after { bottom: auto; top: -6px; transform: translateX(-50%) rotate(225deg); }
+
+/* ---------- Hover card ---------- */
+.hovercard { position: fixed; z-index: 250; width: 280px; padding: 12px 14px 10px; pointer-events: none; font-size: 14px; border: 1.5px solid var(--ink); transform: rotate(-.6deg); }
+.hc-head { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+.hc-sym { position: relative; width: 48px; height: 52px; display: grid; place-items: center; font: 700 1.7rem/1 var(--f-hand); border: 1.4px solid var(--tile-edge);
+  border-radius: 5px 3px 6px 4px; background: hsl(var(--h) var(--cat-s) var(--cat-l)); color: var(--tile-ink); flex: none; }
+.hc-sym small { position: absolute; top: 3px; left: 4px; font: 700 .6rem var(--f-mono); }
+.hc-head b { display: block; font: 700 1.5rem/1 var(--f-hand); }
+.hc-head small { color: var(--ink-2); font-size: 13px; }
+.hc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin: 0; }
+.hc-grid div { border-bottom: 1px dashed var(--line); padding: 2px 0; min-width: 0; }
+.hc-grid dt { font-size: 11.5px; color: var(--ink-2); }
+.hc-grid dd { margin: 0; font: 400 12.5px var(--f-mono); display: flex; align-items: center; }
+.hc-cfg { font: 700 12.5px var(--f-mono); margin-top: 6px; }
+.hc-sum { margin-top: 5px; font-size: 13.5px; line-height: 1.3; }
+.hc-note { margin-top: 5px; background: #fff3a6; color: #3a3424; padding: 3px 6px; font-size: 13px; }
+.hc-foot { margin-top: 6px; font-size: 12px; color: var(--ink-2); }
+@media print { .tip, .hovercard, dialog.simmodal { display: none !important; } }
+
+/* ---------- Isotopes and isobars ---------- */
+.nuc { display: grid; gap: 5px; }
+.nucchips { gap: 5px; }
+.nucchip { border-left-width: 5px; font-family: var(--f-mono); font-size: 12.5px; }
+.nucchip.nk-stable { border-left-color: var(--ink); } .nucchip.nk-long { border-left-color: var(--sk-gold); }
+.nucchip.nk-bm { border-left-color: var(--sk-blue); } .nucchip.nk-bp { border-left-color: var(--sk-red); } .nucchip.nk-a { border-left-color: #e8c61a; }
+.chip[aria-pressed="true"] { background: linear-gradient(176deg, transparent 12%, var(--hi) 14%, var(--hi) 88%, transparent 90%), var(--paper); font-weight: 700; }
+.nucnote { margin: 2px 0 0; font-size: 13.5px; line-height: 1.35; }
+.sd.nk-stable { background: var(--ink); } .sd.nk-long { background: #e9b04a; } .sd.nk-bm { background: #a9c3f2; }
+.sd.nk-bp { background: #f2b4ac; } .sd.nk-a { background: #f2dc7c; }
+.nuclists { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px 28px; align-items: start; }
+.nuclists section { min-width: 0; }
+.nucdef { margin: 2px 0 6px; font-size: 14px; }
+.nuctwrap { max-height: 380px; overflow: auto; border-top: 1.4px solid var(--ink); }
+.nuct { font-size: 14px; } .nuct thead th { position: sticky; top: 0; background: var(--paper); z-index: 1; }
+.nuct td { white-space: nowrap; } .nuct td .sd { margin-right: 6px; }
+.nuct tr.cur td { background: linear-gradient(176deg, transparent 10%, var(--hi) 12%, var(--hi) 90%, transparent 92%); font-weight: 700; }
+.nucbtn { font-family: var(--f-mono); font-size: 13px; }
+#nucchart { display: block; width: 100%; height: 420px; }
+#nucpage { min-height: 6em; line-height: 1.55; }
+
+/* ---------- Table on top, element panel underneath ---------- */
+/* The vignette sits on its own fixed layer: a fixed body background forces a full repaint on every scroll. */
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(130% 90% at 50% 0%, transparent 55%, var(--vignette) 100%); }
+.layout { grid-template-columns: minmax(0, 1fr); }
+.panel-sheet { padding: 20px 22px 22px; }
+.pdetails { display: grid; gap: 13px; min-width: 0; align-content: start; grid-auto-rows: max-content; }
+@media (min-width: 1000px) {
+  .panel-sheet { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); column-gap: 28px; align-items: start; }
+  .panel-sheet > .phead { grid-column: 1 / -1; }
+  .panel-sheet > .simbox, .panel-sheet > .simph { grid-column: 1; }
+  .panel-sheet > .pdetails { grid-column: 2; }
+  .panel .stage { aspect-ratio: 4 / 3; }
+}
+@media (max-width: 700px) { .panel-sheet { padding: 16px 12px; } }
+
+/* ---------- Compact header, table sized to the screen, controls under it ---------- */
+.top-compact { align-items: center; }
+.top-compact .site-title { font-size: clamp(1.9rem, 3.4vw, 2.5rem); }
+.top-compact .sub { margin-top: 4px; font-size: 15px; }
+/* Table width is chosen so the whole table plus the controls bar fit in one screen height. */
+.fitbox { --chrome: 300px; width: min(100%, max(640px, calc((100svh - var(--chrome) - 49px) * 1.818 + 68px))); margin-inline: auto; display: grid; gap: 12px; }
+.tscroll { overflow: visible; margin: 0; padding: 0; }
+.ptable { min-width: 0; }
+.tile .sy { font-size: clamp(.55rem, 2.4cqi, 1.9rem); }
+@container (max-width: 720px) { .keybox { gap: 4px; padding: 0 4px; } .keybox .legend { gap: 0 8px; } .keybox .lg { font-size: 11px; } .keybox .keytxt { display: none; } }
+@container (max-width: 560px) { .tile .z, .tile .st { display: none; } .tile .sy { top: 50%; transform: translateY(-50%); } .ptable { gap: 2px; } .keybox { display: none; } .ph { font-size: .55rem; } }
+.labctl { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(170px, 1fr) minmax(300px, 2.6fr) auto; gap: 8px 18px; align-items: end; padding: 10px 16px 12px; }
+.labctl .field input[type=search], .labctl select { width: 100%; }
+.lc-temp { min-width: 0; }
+.lc-temp .temp-row { padding-bottom: 10px; }
+.lc-temp-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+.lc-temp-foot .tempnews { flex: 1 1 200px; }
+.lc-tools { justify-content: flex-end; }
+@media (max-width: 1050px) { .labctl { grid-template-columns: 1fr 1fr; } .lc-temp, .lc-tools { grid-column: 1 / -1; } .lc-tools { justify-content: flex-start; } }
+@media (max-width: 520px) { .labctl { grid-template-columns: 1fr; } }
+
+/* ---------- Isotope / isobar comparison ---------- */
+dialog.nuccmp { width: calc(100vw - 24px); height: calc(100vh - 24px); max-width: none; max-height: none; padding: 0; border: 1.5px solid var(--ink); color: var(--ink); overflow: hidden; }
+dialog.nuccmp[open] { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+dialog.nuccmp::backdrop { background: rgba(40, 30, 10, .5); }
+:root[data-theme="chalk"] dialog.nuccmp::backdrop { background: rgba(0, 0, 0, .65); }
+.nuccmp .simmodal-head { flex-wrap: wrap; }
+.nc-body { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; padding: 12px 14px 14px; min-height: 0; }
+.nc-stage { position: relative; min-height: 0; border: 1.6px solid var(--ink); border-radius: 6px 3px 7px 4px; overflow: hidden; cursor: grab; touch-action: none;
+  background-color: var(--paper); background-image: linear-gradient(var(--rule) 1px, transparent 1px), linear-gradient(90deg, var(--rule) 1px, transparent 1px); background-size: 20px 20px; }
+.nc-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.nc-lab { position: absolute; top: 10px; max-width: 46%; display: grid; gap: 2px; padding: 8px 10px; background: var(--paper); border: 1.4px solid var(--ink); border-radius: 5px 3px 6px 4px; font-size: 13.5px; pointer-events: none; }
+.nc-a { left: 10px; } .nc-b { right: 10px; text-align: right; justify-items: end; }
+.nc-name { font: 700 1.8rem/1 var(--f-hand); }
+.nc-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+.nc-b .nc-badges { justify-content: flex-end; }
+.nb { font: 700 12px var(--f-mono); padding: 1px 6px; border-radius: 3px; color: #1f2430; }
+.nb.xn { background: #2fd36b; } .nb.xp { background: #ff9a1f; } .nb.xe { background: #cfa6ff; }
+.nc-key { position: absolute; left: 10px; bottom: 8px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; background: var(--paper); padding: 4px 8px; border-radius: 4px; pointer-events: none; }
+.nc-key span { display: inline-flex; align-items: center; }
+.nc-fallback { position: absolute; inset: auto 20px 50% 20px; text-align: center; }
+.nc-side { display: grid; gap: 12px; align-content: start; overflow: auto; min-height: 0; }
+.nc-rel { margin: 0; font-size: 15.5px; line-height: 1.45; }
+.nc-diff { font-size: 14px; }
+.nc-diff td, .nc-diff th { padding-right: 8px; }
+.nc-diff tr.chg td { background: rgba(255, 221, 48, .18); }
+.nc-diff tr.xn.chg td:first-child { box-shadow: inset 4px 0 0 #2fd36b; } .nc-diff tr.xp.chg td:first-child { box-shadow: inset 4px 0 0 #ff9a1f; } .nc-diff tr.xe.chg td:first-child { box-shadow: inset 4px 0 0 #b56cff; }
+.nc-diff b.up { color: var(--sk-green); } .nc-diff b.down { color: var(--sk-red); }
+@media (max-width: 900px) { .nc-body { grid-template-columns: minmax(0, 1fr); overflow: auto; } .nc-stage { height: 58vh; } .nc-lab { max-width: 48%; font-size: 12px; } .nc-name { font-size: 1.4rem; } }
+
+@media (max-width: 700px) { .nuccmp .simmodal-head h2 { flex: 1 1 100%; } }
+
+/* ---------- Logo, GitHub link, footer ---------- */
+:root { --logo-tile: #f6e6a2; --logo-orbit: var(--sk-blue); }
+:root[data-theme="chalk"] { --logo-tile: #4a5a3e; }
+.brandrow { display: flex; align-items: center; gap: 10px; }
+.logolink { display: inline-flex; color: var(--ink); flex: none; transition: transform .15s; }
+.logolink:hover { transform: rotate(-4deg) scale(1.06); }
+.logo { display: block; color: var(--ink); overflow: visible; }
+.ghlink { display: inline-flex; align-items: center; gap: 6px; }
+.ghlink.is-empty { opacity: .55; cursor: default; }
+.ghlink.is-empty:hover { transform: none; box-shadow: none; }
+.site-foot .row { align-items: center; }
+.foot-brand { display: flex; align-items: center; gap: 10px; }
+.foot-brand > div { display: grid; gap: 1px; }
+.foot-brand b { font: 700 1.3rem/1 var(--f-hand); color: var(--ink); }
+.foot-nav { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
+.foot-nav .ghlink { gap: 4px; }
+.foot-small { margin: 0; font-size: 13px; }
+.contact-done p { margin: 0 0 4px; }
+.contact-done #contact-done-more { font: 400 15px/1.4 var(--f-body); color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .logolink { transition: none; } }

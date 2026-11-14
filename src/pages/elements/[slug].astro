@@ -1,0 +1,84 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import LabApp from "../../components/LabApp.astro";
+import LabOverlays from "../../components/LabOverlays.astro";
+import { ELEMENTS, CAT_HUE, CAT_NAME } from "../../lib/elements.js";
+import { elementArticle } from "../../lib/content.js";
+import { SITE } from "../../config/site.js";
+
+export function getStaticPaths() {
+  return ELEMENTS.map((el) => ({ params: { slug: el.slug }, props: { z: el.Z } }));
+}
+const el = ELEMENTS[Astro.props.z - 1];
+const a = elementArticle(el);
+const url = `${SITE.url}/elements/${el.slug}/`;
+const prev = ELEMENTS[el.Z - 2], next = ELEMENTS[el.Z];
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage", "@id": `${url}#webpage`, url, name: a.title, description: a.description, inLanguage: SITE.lang,
+      isPartOf: { "@id": `${SITE.url}/#website` }, breadcrumb: { "@id": `${url}#breadcrumb` }, about: { "@id": `${url}#element` },
+      primaryImageOfPage: { "@type": "ImageObject", url: `${SITE.url}/og/${el.slug}.png`, width: 1200, height: 630 },
+      dateModified: SITE.dataUpdated
+    },
+    {
+      "@type": "ChemicalSubstance", "@id": `${url}#element`, name: el.name, alternateName: el.sym, description: el.sum, url,
+      sameAs: `https://en.wikipedia.org/wiki/${encodeURIComponent(el.name)}`,
+      additionalProperty: [
+        { "@type": "PropertyValue", name: "Atomic number", value: el.Z },
+        { "@type": "PropertyValue", name: "Atomic mass", value: el.mass, unitText: "u" },
+        { "@type": "PropertyValue", name: "Element category", value: CAT_NAME[el.cat] },
+        { "@type": "PropertyValue", name: "Electron configuration", value: el.config.replace(/(\d[spdf]) (\d+)/g, "$1$2") },
+        ...(el.melt ? [{ "@type": "PropertyValue", name: "Melting point", value: el.melt, unitCode: "KEL" }] : []),
+        ...(el.boil ? [{ "@type": "PropertyValue", name: "Boiling point", value: el.boil, unitCode: "KEL" }] : []),
+        ...(el.year ? [{ "@type": "PropertyValue", name: "Year discovered", value: el.year }] : [])
+      ]
+    },
+    {
+      "@type": "BreadcrumbList", "@id": `${url}#breadcrumb`,
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: SITE.name, item: `${SITE.url}/` },
+        { "@type": "ListItem", position: 2, name: "Elements", item: `${SITE.url}/elements/` },
+        { "@type": "ListItem", position: 3, name: el.name, item: url }
+      ]
+    }
+  ]
+};
+---
+<BaseLayout title={a.title} description={a.description} image={`/og/${el.slug}.png`} imageAlt={`${el.name} (${el.sym}), element ${el.Z}, with a sketch of its atom`} jsonLd={jsonLd} element={el.Z} type="article">
+  <LabApp z={el.Z} titleTag="p" linkTitle>
+    <section slot="intro" class="intro sheet ruled" aria-labelledby="el-title">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol><li><a href="/">Home</a></li><li><a href="/elements/">Elements</a></li><li aria-current="page">{el.name}</li></ol>
+      </nav>
+      <div class="h1row"><span class="chipsym" aria-hidden="true" style={`--h:${CAT_HUE[el.cat]}`}>{el.sym}</span><h1 id="el-title" class="article-h1">{el.name} <small>({el.sym}), element {el.Z}</small></h1></div>
+      <p class="lede">{a.lede}</p>
+    </section>
+    <article class="article sheet ruled" aria-labelledby="facts-title">
+      <h2 id="facts-title">{el.name} at a glance</h2>
+      <dl class="facts">
+        {a.facts.map(([k, v]) => <div><dt>{k}</dt><dd set:html={v} /></div>)}
+      </dl>
+      {a.sections.map((s) => (
+        <section>
+          <h2>{s.h}</h2>
+          <p set:html={s.p.join(" ")} />
+        </section>
+      ))}
+      <h2>Related elements</h2>
+      <ul class="related">
+        {a.related.map((r) => (
+          <li><a href={`/elements/${r.el.slug}/`} title={r.why}><span class="chipsym" style={`--h:${CAT_HUE[r.el.cat]}`}>{r.el.sym}</span>{r.el.name} <small class="muted">({r.why})</small></a></li>
+        ))}
+      </ul>
+      <p class="muted">
+        {prev && <a href={`/elements/${prev.slug}/`} rel="prev">← {prev.name} ({prev.Z})</a>}
+        {prev && next && " · "}
+        {next && <a href={`/elements/${next.slug}/`} rel="next">{next.name} ({next.Z}) →</a>}
+        {" · "}<a href="/elements/">All elements</a>
+      </p>
+    </article>
+  </LabApp>
+  <LabOverlays slot="overlays" />
+</BaseLayout>

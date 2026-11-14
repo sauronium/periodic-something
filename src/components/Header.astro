@@ -1,0 +1,23 @@
+---
+// Compact site header: logo, title and site links. The lab controls live under the table (LabControls.astro).
+// On element pages the visible page title is the element's H1, so the site title becomes a link.
+import Logo from "./Logo.astro";
+import GithubLink from "./GithubLink.astro";
+interface Props { titleTag?: "h1" | "p"; linkTitle?: boolean }
+const { titleTag = "h1", linkTitle = false } = Astro.props;
+const Title = titleTag;
+---
+<header class="top top-compact">
+  <div class="brand">
+    <div class="brandrow">
+      <a href="/" class="logolink" aria-label="Periodic Table Lab home"><Logo /></a>
+      <Title class="site-title">{linkTitle ? <a href="/" class="title-link">Periodic Table <span class="hl-word">Lab</span></a> : <>Periodic Table <span class="hl-word">Lab</span></>}</Title>
+    </div>
+    <p class="sub">All 118 elements in a lab notebook. Hover a tile for the basics, click it for its 3D atom.</p>
+  </div>
+  <nav class="hdr-nav" aria-label="Site">
+    <a class="btn" href="/elements/" data-tip="Browse a page for every element">All elements</a>
+    <GithubLink />
+    <button class="btn" type="button" data-contact-open data-tip="Send a question, correction or idea">Contact</button>
+  </nav>
+</header>

@@ -1,0 +1,24 @@
+---
+import { SITE } from "../config/site.js";
+import Logo from "./Logo.astro";
+import GithubLink from "./GithubLink.astro";
+const year = new Date().getFullYear();
+---
+<footer class="site-foot sheet">
+  <div class="row">
+    <div class="foot-brand">
+      <Logo size={34} />
+      <div>
+        <b>{SITE.name}</b>
+        <span>Write to us: <a href={`mailto:${SITE.email}`} data-tip="Email the lab">{SITE.email}</a></span>
+      </div>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="/">The lab</a>
+      <a href="/elements/">All 118 elements</a>
+      <button class="linkish" type="button" data-contact-open>Contact form</button>
+      <GithubLink class="linkish" />
+    </nav>
+  </div>
+  <p class="foot-small">© {year} {SITE.name}. Element data from standard reference values; superheavy element properties are predictions.</p>
+</footer>

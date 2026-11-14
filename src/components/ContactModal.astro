@@ -1,0 +1,36 @@
+---
+// Contact popup. Submissions go to /api/contact (src/pages/api/contact.js, URL /api/contact/), which emails them via Zoho SMTP.
+import { SITE } from "../config/site.js";
+---
+<dialog id="contact" class="contact sheet ruled" aria-labelledby="contact-title">
+  <form id="contact-form" class="contact-form" method="post" action="/api/contact/" novalidate>
+    <button type="button" class="contact-x" data-contact-close aria-label="Close">×</button>
+    <h2 id="contact-title">Write to the lab</h2>
+    <p class="muted">Questions, a data correction or an idea for a new feature? Leave a note, or email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+    <label class="field"><span>Your name</span><input name="name" type="text" required autocomplete="name" maxlength="120" /></label>
+    <label class="field"><span>Email</span><input name="email" type="email" required autocomplete="email" maxlength="200" /></label>
+    <label class="field"><span>About</span>
+      <select name="topic">
+        <option>General question</option>
+        <option>Report a data error</option>
+        <option>Feature idea</option>
+        <option>Teaching or classroom use</option>
+        <option>Something else</option>
+      </select>
+    </label>
+    <label class="field"><span>Message</span><textarea name="message" rows="5" required minlength="10" maxlength="5000"></textarea></label>
+    <label class="hp" aria-hidden="true">Leave this empty<input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
+    <p class="field-err" id="contact-err" role="alert" hidden></p>
+    <div class="contact-actions">
+      <button class="btn" type="button" data-contact-close>Cancel</button>
+      <button class="btn primary" type="submit" id="contact-send">Send note</button>
+    </div>
+    <div class="contact-done" id="contact-done" role="status" hidden>
+      <p><b>Thanks, your note is on its way.</b></p>
+      <p id="contact-done-more">We've emailed you a confirmation. If it isn't in your inbox within a few minutes, please check your spam or junk folder, and mark it as "not spam" so our reply reaches you.</p>
+    </div>
+  </form>
+</dialog>
+<script>
+  import "../scripts/contact.js";
+</script>

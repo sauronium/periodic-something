@@ -1,0 +1,32 @@
+---
+// Full-screen loader: a random element's Bohr atom spins in 3D while the lab starts up.
+// The element is picked in the browser, so it changes on every visit.
+import { ELEMENTS, CAT_HUE } from "../lib/elements.js";
+const LIST = ELEMENTS.map((e) => [e.Z, e.sym, e.name, CAT_HUE[e.cat]]);
+---
+<div id="preloader" class="preloader" role="status" aria-live="polite" aria-label="Loading Periodic Table Lab">
+  <div class="pl-card sheet">
+    <div class="pl-stage">
+      <canvas id="pl-gl" aria-hidden="true"></canvas>
+      <div class="pl-tile" id="pl-tile"><small id="pl-z"></small><span id="pl-sym"></span></div>
+    </div>
+    <div class="pl-name" id="pl-name">Periodic Table Lab</div>
+    <p class="pl-msg" id="pl-msg">Sharpening pencils</p>
+  </div>
+  <button class="btn pl-skip" type="button" id="pl-skip">Skip</button>
+</div>
+<script is:inline define:vars={{ LIST }}>
+  (function () {
+    var e = LIST[Math.floor(Math.random() * LIST.length)], msgs = ["Sharpening pencils", "Counting electrons", "Packing the nucleus", "Polishing the orbitals", "Warming up the Bunsen burner"];
+    window.__ptlPre = e[0];
+    document.getElementById("pl-z").textContent = e[0];
+    document.getElementById("pl-sym").textContent = e[1];
+    document.getElementById("pl-name").textContent = e[2];
+    document.getElementById("pl-tile").style.setProperty("--h", e[3]);
+    document.getElementById("pl-msg").textContent = msgs[Math.floor(Math.random() * msgs.length)];
+    try { if (sessionStorage.getItem("ptl:seen")) document.documentElement.classList.add("pl-quick"); sessionStorage.setItem("ptl:seen", "1"); } catch (_) {}
+  })();
+</script>
+<script>
+  import "../scripts/preloader.js";
+</script>

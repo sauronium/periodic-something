@@ -1,0 +1,40 @@
+---
+// Side-by-side 3D comparison of two nuclei (isotopes, isobars or a parent and its decay product).
+// Extra protons, neutrons and electrons are highlighted so the difference is easy to see.
+---
+<dialog class="nuccmp sheet" id="nuccmp" aria-labelledby="ncTitle">
+  <div class="simmodal-head">
+    <h2 id="ncTitle">Compare nuclei</h2>
+    <div class="seg" role="group" aria-label="What to show">
+      <button class="segb" type="button" id="ncNuc" aria-pressed="true" data-tip="Zoom in on the two nuclei, where the extra neutrons and protons are">Nucleus</button>
+      <button class="segb" type="button" id="ncAtom" aria-pressed="false" data-tip="Show the whole atoms, with their electron shells">Whole atom</button>
+    </div>
+    <button class="btn" type="button" id="ncHi" aria-pressed="true" data-tip="Fade the shared particles so only the differences stand out">Highlight differences</button>
+    <button class="btn" type="button" id="ncSpin" aria-pressed="true" data-tip="Turn both models slowly">Auto-rotate</button>
+    <button class="btn" type="button" id="ncSwap" data-tip="Swap the left and right sides">Swap</button>
+    <button class="btn" type="button" id="ncClose" data-tip="Close the comparison (Esc)">Close</button>
+  </div>
+  <div class="nc-body">
+    <div class="nc-stage" id="ncStage" data-tip="Drag to turn both models · scroll to zoom">
+      <canvas id="ncGl" aria-label="3D models of the two nuclei side by side"></canvas>
+      <div class="nc-lab nc-a" id="ncA"></div>
+      <div class="nc-lab nc-b" id="ncB"></div>
+      <div class="nc-key" aria-hidden="true">
+        <span><i class="sd" style="background:#e5483a"></i>proton</span>
+        <span><i class="sd" style="background:#9aa6b4"></i>neutron</span>
+        <span><i class="sd" style="background:#2fd36b"></i>extra neutron</span>
+        <span><i class="sd" style="background:#ff9a1f"></i>extra proton</span>
+        <span><i class="sd" style="background:#b56cff"></i>extra electron</span>
+      </div>
+      <p class="nc-fallback" id="ncFallback" hidden>3D needs WebGL, which this browser could not start. The table on the right still shows every difference.</p>
+    </div>
+    <aside class="nc-side">
+      <p class="nc-rel" id="ncRel"></p>
+      <table class="grid nc-diff" id="ncDiff"></table>
+      <div class="ex nc-load">
+        <button class="btn" type="button" id="ncLoadA"></button>
+        <button class="btn primary" type="button" id="ncLoadB"></button>
+      </div>
+    </aside>
+  </div>
+</dialog>

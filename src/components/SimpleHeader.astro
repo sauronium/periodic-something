@@ -1,0 +1,20 @@
+---
+// Lighter header for pages without the interactive lab (element index, 404).
+import Logo from "./Logo.astro";
+import GithubLink from "./GithubLink.astro";
+---
+<header class="top top-compact">
+  <div class="brand">
+    <div class="brandrow">
+      <a href="/" class="logolink" aria-label="Periodic Table Lab home"><Logo /></a>
+      <p class="site-title"><a href="/" class="title-link">Periodic Table <span class="hl-word">Lab</span></a></p>
+    </div>
+    <p class="sub">An interactive periodic table drawn like a lab notebook.</p>
+  </div>
+  <nav class="hdr-nav" aria-label="Site">
+    <a class="btn" href="/" data-tip="Back to the interactive table">Open the lab</a>
+    <a class="btn" href="/elements/" data-tip="Browse a page for every element">All elements</a>
+    <GithubLink />
+    <button class="btn" type="button" data-contact-open data-tip="Send a question, correction or idea">Contact</button>
+  </nav>
+</header>

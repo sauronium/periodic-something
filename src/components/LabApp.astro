@@ -1,0 +1,29 @@
+---
+// The interactive lab: header controls, periodic table, notebook and the specimen panel.
+// Slots: "intro" sits between the header and the table; the default slot comes after the lab.
+import Header from "./Header.astro";
+import TableSection from "./TableSection.astro";
+import Notebook from "./Notebook.astro";
+import ElementPanel from "./ElementPanel.astro";
+import LabNotes from "./LabNotes.astro";
+import LabControls from "./LabControls.astro";
+import NucCompare from "./NucCompare.astro";
+interface Props { z?: number; titleTag?: "h1" | "p"; linkTitle?: boolean }
+const { z = 26, titleTag = "h1", linkTitle = false } = Astro.props;
+---
+<Header titleTag={titleTag} linkTitle={linkTitle} />
+<slot name="intro" />
+<main class="layout" id="main">
+  <div class="fitbox">
+    <TableSection />
+    <LabControls />
+  </div>
+  <ElementPanel z={z} />
+  <NucCompare />
+  <Notebook />
+</main>
+<slot />
+<LabNotes />
+<script>
+  import "../scripts/lab.js";
+</script>

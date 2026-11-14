@@ -1,0 +1,44 @@
+---
+// Table controls, shown right under the periodic table: search, colour mode, temperature and tools.
+---
+<section class="labctl sheet" aria-label="Table controls">
+  <label class="field lc-search"><span>Search</span><input id="q" type="search" placeholder="Name, symbol or Z" autocomplete="off" data-tip="Type a name, symbol or atomic number. Enter opens the first match. Press / to jump here."></label>
+  <label class="field lc-mode"><span>Colour by</span>
+    <select id="mode" data-tip="Choose what the tile colours show">
+      <option value="cat">Element category</option>
+      <option value="state">State at temperature</option>
+      <option value="block">Block (s, p, d, f)</option>
+      <option value="en">Electronegativity</option>
+      <option value="mass">Atomic mass</option>
+      <option value="rad">Atomic radius</option>
+      <option value="dens">Density</option>
+      <option value="melt">Melting point</option>
+      <option value="boil">Boiling point</option>
+      <option value="year">Year discovered</option>
+      <option value="ie">Ionization energy</option>
+      <option value="ea">Electron affinity</option>
+      <option value="crust">Abundance in Earth's crust</option>
+      <option value="body">Abundance in the human body</option>
+      <option value="haz">Main hazard</option>
+    </select></label>
+  <div class="temp lc-temp">
+    <span class="lbl" data-tip="The state of every element changes with temperature. Tiles flash when an element melts, boils, freezes or condenses.">Temperature</span>
+    <div class="temp-row">
+      <div class="trk">
+        <input id="temp" type="range" min="0" max="6000" step="1" value="298" aria-label="Temperature in kelvin" data-tip="Drag to heat or cool the whole table">
+        <button type="button" class="tmark tm-melt" id="tm-melt" aria-label="Jump to the selected element's melting point">m</button>
+        <button type="button" class="tmark tm-boil" id="tm-boil" aria-label="Jump to the selected element's boiling point">b</button>
+      </div>
+      <output id="tempout" for="temp" data-tip="Current temperature in kelvin and degrees Celsius"></output>
+    </div>
+    <div class="lc-temp-foot">
+      <div class="chips" id="chips"></div>
+      <div class="tempnews" id="tempnews" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="hdr-tools lc-tools">
+    <button class="btn theme-btn" id="theme" type="button" aria-label="Switch paper style" data-tip="Switch between paper and chalkboard"></button>
+    <button class="btn theme-btn" id="drawbtn" type="button" aria-pressed="false" data-tip="Draw on the table and the simulation with a pencil (D key)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>Draw</button>
+    <button class="btn theme-btn" id="soundbtn" type="button" aria-pressed="false" data-tip="Turn soft pencil sounds on or off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>Sounds</button>
+  </div>
+</section>

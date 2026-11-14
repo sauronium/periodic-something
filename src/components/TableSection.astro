@@ -1,0 +1,33 @@
+---
+// The periodic table, rendered on the server so every element is in the HTML for search engines.
+import { ELEMENTS, CAT_HUE, CATEGORIES, fmt } from "../lib/elements.js";
+---
+<section class="tablewrap" aria-label="Periodic table of the elements">
+        <div class="quizbar sheet" id="quizbar" hidden>
+          <div class="qprompt" id="qprompt" aria-live="polite"></div>
+          <div class="qfeed" id="qfeed" aria-live="polite"></div>
+          <div class="qmeta" id="qmeta"></div>
+          <button class="btn" id="qskip" type="button">Skip</button>
+          <button class="btn" id="qstop" type="button">Stop</button>
+        </div>
+        <div class="tscroll"><div id="table" class="ptable">
+          {ELEMENTS.map((el) => (
+            <button
+              class={`tile r${el.Z % 4}`}
+              type="button"
+              data-z={el.Z}
+              style={`grid-row:${el.row};grid-column:${el.col};--h:${CAT_HUE[el.cat]};--tilt:${(((el.Z * 37) % 11) - 5) * 0.13}deg`}
+              aria-pressed="false"
+              aria-label={`${el.name}, atomic number ${el.Z}`}
+            ><span class="z">{el.Z}</span><span class="st" data-s="solid"></span><span class="sy">{el.sym}</span><span class="nm">{el.name}</span><span class="ms">{el.mass >= 100 && el.Z > 94 ? `[${Math.round(el.mass)}]` : fmt(el.mass, 5)}</span><span class="qm"></span><span class="nt"></span><span class="chg" aria-hidden="true"></span></button>
+          ))}
+          <button type="button" class="ph" data-cat="lanthanide" style={`grid-row:6;grid-column:3;--h:${CAT_HUE.lanthanide}`} title="Highlight the lanthanides">57–71</button>
+          <button type="button" class="ph" data-cat="actinide" style={`grid-row:7;grid-column:3;--h:${CAT_HUE.actinide}`} title="Highlight the actinides">89–103</button>
+          <div class="keybox" id="keybox">
+            <div class="legend">
+              {CATEGORIES.map((c) => <span class="lg"><i style={`--h:${c[2]}`}></i>{c[1]}</span>)}
+            </div>
+            <p class="keytxt">Tap a category to highlight it. Tap an element to open its page.</p>
+          </div>
+        </div></div>
+      </section>

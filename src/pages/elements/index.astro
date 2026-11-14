@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SimpleHeader from "../../components/SimpleHeader.astro";
+import { ELEMENTS, CATEGORIES, CAT_NAME } from "../../lib/elements.js";
+import { SITE } from "../../config/site.js";
+
+const title = `All 118 Elements: Properties, Atoms and Facts | ${SITE.name}`;
+const description = "Every chemical element from hydrogen to oganesson, grouped by category, with its symbol, atomic number and a page of facts, 3D atom models and properties.";
+const url = `${SITE.url}/elements/`;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage", "@id": `${url}#webpage`, url, name: title, description, inLanguage: SITE.lang,
+      isPartOf: { "@id": `${SITE.url}/#website` }, breadcrumb: { "@id": `${url}#breadcrumb` },
+      mainEntity: {
+        "@type": "ItemList", name: "Chemical elements", numberOfItems: ELEMENTS.length,
+        itemListElement: ELEMENTS.map((e) => ({ "@type": "ListItem", position: e.Z, url: `${SITE.url}/elements/${e.slug}/`, name: e.name }))
+      }
+    },
+    {
+      "@type": "BreadcrumbList", "@id": `${url}#breadcrumb`,
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: SITE.name, item: `${SITE.url}/` },
+        { "@type": "ListItem", position: 2, name: "Elements", item: url }
+      ]
+    }
+  ]
+};
+---
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <SimpleHeader />
+  <main id="main" class="hub sheet ruled">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li aria-current="page">Elements</li></ol></nav>
+    <h1>All 118 chemical elements</h1>
+    <p>Every known element, from hydrogen (1) to oganesson (118), sorted into the ten families chemists use. Each page has the element's key numbers, a plain-language explanation of its structure and chemistry, and the interactive lab opened on that element.</p>
+    {CATEGORIES.map(([key, label, hue]) => {
+      const list = ELEMENTS.filter((e) => e.cat === key);
+      return (
+        <section aria-labelledby={`cat-${key}`}>
+          <h2 id={`cat-${key}`}>{label}s <small class="muted">({list.length})</small></h2>
+          <ul class="hublist">
+            {list.map((e) => (
+              <li>
+                <span class="chipsym" style={`--h:${hue}`}>{e.sym}</span>
+                <a href={`/elements/${e.slug}/`}>{e.name}</a>
+                <small>Element {e.Z} · {e.sum}</small>
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    })}
+  </main>
+</BaseLayout>

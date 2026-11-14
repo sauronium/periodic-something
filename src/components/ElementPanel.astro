@@ -1,0 +1,102 @@
+---
+// Specimen panel: simulation, controls and the selected element's details (filled in by the client script).
+// The whole simulation block (#simbox) can be moved into a full-screen dialog with the Expand button.
+import { ELEMENTS, CAT_NAME, CAT_HUE } from "../lib/elements.js";
+interface Props { z?: number }
+const el = ELEMENTS[(Astro.props.z ?? 26) - 1];
+---
+<aside class="panel" aria-label="Element details">
+  <div class="panel-sheet sheet">
+    <div class="phead">
+      <div class="bigsym" id="bigsym" style={`--h:${CAT_HUE[el.cat]}`}><small id="bigz">{el.Z}</small><span id="bigs">{el.sym}</span></div>
+      <div><h2 id="ename">{el.name}</h2><p id="ecat">{CAT_NAME[el.cat]}</p></div>
+      <div class="pnav">
+        <button class="ib" id="totable" type="button" aria-label="Back to the periodic table" data-tip="Scroll back up to the periodic table"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+        <button class="ib" id="pin" type="button" aria-pressed="false" aria-label="Pin to compare" data-tip="Pin this element to the Compare page (up to four)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1 6 4 3v2H6v-2l4-3z"/><path d="M12 14v7"/></svg></button>
+        <button class="ib" id="rand" type="button" aria-label="Random element" data-tip="Jump to a random element"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/></svg></button>
+        <button class="ib" id="link" type="button" aria-label="Copy a link to this view" data-tip="Copy a link that reopens this element, view, temperature and style"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
+        <button class="ib" id="prev" type="button" aria-label="Previous element" data-tip="Previous element (← key)">&#8592;</button>
+        <button class="ib" id="next" type="button" aria-label="Next element" data-tip="Next element (→ key)">&#8594;</button>
+      </div>
+    </div>
+
+    <div class="simbox" id="simbox">
+      <div class="simmain">
+        <div class="tabs" role="tablist" aria-label="Simulation view">
+          <button class="tab" role="tab" data-view="atom" aria-selected="true" data-tip="Bohr model: nucleus with electrons on their shells">Atom</button>
+          <button class="tab" role="tab" data-view="cloud" aria-selected="false" data-tip="Orbital clouds: where each electron is likely to be found">Orbitals</button>
+          <button class="tab" role="tab" data-view="lattice" aria-selected="false" data-tip="Crystal lattice: how the atoms pack, and how they move as it melts and boils">Crystal</button>
+          <button class="tab" role="tab" data-view="light" aria-selected="false" data-tip="Emission spectrum and flame-test colour">Light</button>
+        </div>
+        <div class="stagectl simtop">
+          <div class="seg" role="group" aria-label="Drawing style">
+            <button class="segb" id="r3d" type="button" aria-pressed="true" data-tip="Draw the simulation as a shaded 3D model">3D model</button>
+            <button class="segb" id="rsk" type="button" aria-pressed="false" data-tip="Draw the simulation as pencil scribbles on paper (S key)">Scribbles</button>
+          </div>
+          <button class="btn maxbtn" id="maxbtn" type="button" aria-pressed="false" aria-label="Expand the simulation" data-tip="Open the simulation full screen (F key)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="maxlabel">Expand</span></button>
+        </div>
+        <div class="stagecap" id="tag3d" aria-live="polite"></div>
+        <div class="stage" id="stage" data-mode="3d" data-tip="Drag to rotate · scroll or pinch to zoom">
+          <canvas id="gl" aria-label="3D model of the selected element"></canvas>
+          <canvas id="sk" aria-label="Hand-drawn sketch of the selected element" hidden></canvas>
+        </div>
+        <p class="stagenote" id="note"></p>
+      </div>
+      <div class="simside">
+        <div class="stagectl">
+          <button class="btn" id="spin" type="button" aria-pressed="true" data-tip="Turn the model slowly on its own">Auto-rotate</button>
+          <button class="btn" id="wobble" type="button" aria-pressed="true" disabled data-tip="Redraw the pencil lines a few times a second, like hand-drawn animation (Scribbles only)">Wobbly lines</button>
+          <button class="btn" id="bonds" type="button" aria-pressed="true" disabled data-tip="Show the bonds between neighbouring atoms (Crystal view, solids only)">Bonds</button>
+          <button class="btn" id="reset" type="button" data-tip="Put the camera back to the starting angle and zoom">Reset view</button>
+          <button class="btn" id="save" type="button" data-tip="Download the current drawing as a PNG picture">Save picture</button>
+        </div>
+        <div class="ctxbox" id="ctxbox">
+          <div class="ctlrow" id="chrow"><span class="lbl" data-tip="Ions: add or remove electrons. The nucleus stays the same.">Charge</span><button class="ib sm" id="chm" type="button" aria-label="Add an electron" data-tip="Add an electron (charge goes down by 1)">&minus;</button><output id="chout" data-tip="Current charge of the atom">0</output><button class="ib sm" id="chp" type="button" aria-label="Remove an electron" data-tip="Remove an electron (charge goes up by 1)">+</button><span class="chips" id="ionchips"></span></div>
+          <div class="ctlrow" id="nrow"><span class="lbl" data-tip="Isotopes: same element, different number of neutrons">Neutrons</span><input id="nsl" type="range" min="0" max="10" step="1" aria-label="Neutron count" data-tip="Change the neutron count to make a different isotope"><output id="nout"></output><span class="stab" id="stab"></span><button class="btn" id="decay" type="button" data-tip="Let an unstable nucleus decay and turn into a new element">Decay</button></div>
+          <div class="ctlrow" id="brow"><button class="btn" id="build" type="button" data-tip="Add the electrons one at a time in filling order">Build up electrons</button><span class="muted" id="buildnote"></span></div>
+          <div class="ctlrow" id="latrow" hidden><span class="lbl">State</span><span id="latstate" class="latstate"></span><span class="chips" id="latchips"></span><span class="muted latinfo" id="latinfo"></span></div>
+          <div class="ctlrow" id="lightrow" hidden><span id="lightinfo" class="muted"></span></div>
+        </div>
+        <div class="key3d" id="key3d"></div>
+      </div>
+    </div>
+
+    <div class="pdetails">
+    <p class="esum" id="esum">{el.sum}</p>
+    <p class="elink-row"><a id="elink" class="elink" href={`/elements/${el.slug}/`}>Read the full {el.name} page →</a></p>
+    <div class="phase" id="phase">
+      <div class="lbl" data-tip="Solid, liquid and gas ranges for this element at normal pressure. Click or drag the bar to set the temperature.">States across temperature</div>
+      <div class="phasebar" id="phasebar" role="slider" tabindex="0" aria-label="Temperature on this element's state bar" aria-valuemin="0" aria-valuemax="6000" aria-valuenow="298"></div>
+      <div class="phaselabels" id="phaselabels"></div>
+    </div>
+    <div class="nuc" id="nuc">
+      <div class="lbl" data-tip="Isotopes: same element (same number of protons), different numbers of neutrons. Click one to compare it side by side with this nucleus.">Isotopes</div>
+      <div class="chips nucchips" id="isochips"></div>
+      <div class="lbl" data-tip="Isobars: different elements whose nuclei have the same mass number (protons + neutrons). Click one to compare it side by side.">Isobars <span class="muted" id="isobarA"></span></div>
+      <div class="chips nucchips" id="isobchips"></div>
+      <p class="nucnote muted" id="nucnote"></p>
+    </div>
+    <dl class="props" id="props"></dl>
+    <div>
+      <div class="lbl">Electron configuration</div>
+      <div class="config" id="config"></div>
+      <div class="obox" id="obox" aria-label="Orbital box diagram" data-tip="Orbital boxes: each box holds up to two electrons with opposite spins (↑↓). Boxes fill singly first."></div>
+      <div class="shellbar" id="shellbar" data-tip="How many electrons sit in each shell, from K (innermost) outward"></div>
+    </div>
+    <div class="lewisrow">
+      <div><div class="lbl" data-tip="Dots show the outer-shell (valence) electrons used in bonding">Lewis dots</div><svg id="lewis" viewBox="0 0 120 104" aria-label="Lewis dot diagram"></svg><small class="muted" id="lewisnote"></small></div>
+      <div><div class="lbl">Hazards</div><div class="hazards" id="haz"></div></div>
+    </div>
+    <div class="sticky"><label class="lbl" for="enote">My note</label><textarea id="enote" rows="3" placeholder="Write a note about this element. It stays on this device." data-tip="Your own note. A yellow corner appears on the element's tile."></textarea></div>
+    </div>
+  </div>
+</aside>
+<dialog class="simmodal sheet" id="simmodal" aria-labelledby="simtitle">
+  <div class="simmodal-head">
+    <button class="ib" type="button" id="simprev" aria-label="Previous element" data-tip="Previous element (← key)">&#8592;</button>
+    <h2 id="simtitle">Simulation</h2>
+    <button class="ib" type="button" id="simnext" aria-label="Next element" data-tip="Next element (→ key)">&#8594;</button>
+    <button class="btn" type="button" id="simclose" data-tip="Close full screen (Esc or F)">Close</button>
+  </div>
+  <div class="simslot" id="simslot"></div>
+</dialog>

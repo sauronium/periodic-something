@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+npm-debug.log*
+.DS_Store
+!.env.example
+
+# Local Claude Code files (skill copies, preview config). Restore skills with: npx skills experimental_install
+.claude/

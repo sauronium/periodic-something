@@ -1,0 +1,20 @@
+---
+// Crawlable links to every element page, grouped by category.
+import { ELEMENTS, CATEGORIES, CAT_HUE } from "../lib/elements.js";
+interface Props { heading?: string; level?: "h2" | "h3" }
+const { heading = "Every element has its own page", level = "h2" } = Astro.props;
+const H = level;
+---
+<section class="eindex" aria-label="Element index">
+  <H class="subhead">{heading}</H>
+  {CATEGORIES.map(([key, label, hue]) => (
+    <div>
+      <h3>{label}s</h3>
+      <ul>
+        {ELEMENTS.filter((e) => e.cat === key).map((e) => (
+          <li><a href={`/elements/${e.slug}/`}><span class="chipsym" style={`--h:${hue}`}>{e.sym}</span>{e.name}</a></li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</section>

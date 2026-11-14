@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import LabApp from "../components/LabApp.astro";
+import LabOverlays from "../components/LabOverlays.astro";
+import ElementIndex from "../components/ElementIndex.astro";
+import { SITE } from "../config/site.js";
+
+const title = `${SITE.name}: Interactive Periodic Table with 3D Atoms`;
+const description = "Explore all 118 elements in a paper-notebook periodic table: 3D and hand-drawn atoms, orbitals, crystal lattices, spectra, trends, an equation balancer and quizzes. Free.";
+const features = [
+  ["3D or scribbled atoms", "Every element's Bohr atom, orbital cloud and crystal lattice, as a 3D model or as pencil sketches you can rotate."],
+  ["Ions, isotopes and decay", "Add or remove electrons, change the neutron count and watch unstable nuclei decay into new elements."],
+  ["Spectra and flame tests", "Bright-line emission spectra and flame colours for the elements chemists test most often."],
+  ["Periodic trends", "Hand-drawn charts of electronegativity, radius, ionization energy, density and more against atomic number."],
+  ["Chemistry tools", "Molar mass, grams to moles to particles, empirical formulas from percentages, and an equation balancer."],
+  ["Quizzes and flashcards", "Find-the-element quizzes, a 60-second challenge and spaced-repetition flashcards."],
+  ["Discovery timeline", "Watch the table fill in from ancient metals to the superheavy elements made in the 2000s."],
+  ["Notes and drawings", "Doodle on the table, pin sticky notes to elements and print flashcards or worksheets."]
+];
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", "@id": `${SITE.url}/#website`, url: `${SITE.url}/`, name: SITE.name, description: SITE.description, inLanguage: SITE.lang, publisher: { "@id": `${SITE.url}/#org` } },
+    { "@type": "Organization", "@id": `${SITE.url}/#org`, name: SITE.name, url: `${SITE.url}/`, email: SITE.email, logo: `${SITE.url}/icon-512.png` },
+    {
+      "@type": "WebApplication", "@id": `${SITE.url}/#app`, name: SITE.name, url: `${SITE.url}/`, description: SITE.description,
+      applicationCategory: "EducationalApplication", operatingSystem: "Any (runs in a web browser)", browserRequirements: "Requires JavaScript. 3D view requires WebGL.",
+      isAccessibleForFree: true, inLanguage: SITE.lang, image: `${SITE.url}/og/home.png`,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      featureList: features.map((f) => f[0]),
+      educationalUse: ["Self study", "Classroom"], audience: { "@type": "EducationalAudience", educationalRole: "student" }
+    }
+  ]
+};
+---
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <LabApp z={26}>
+    <section class="intro sheet ruled" aria-labelledby="about-title">
+      <h2 id="about-title">What you can do in the lab</h2>
+      <p>Periodic Table Lab is a free, interactive periodic table for students, teachers and anyone curious about chemistry. Pick any element to see what it looks like inside, how it behaves at different temperatures and where it sits in the patterns of the table.</p>
+      <ul class="features">
+        {features.map(([t, d]) => <li><b>{t}</b>{d}</li>)}
+      </ul>
+      <ElementIndex />
+    </section>
+  </LabApp>
+  <LabOverlays slot="overlays" />
+</BaseLayout>
