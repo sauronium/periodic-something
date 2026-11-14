@@ -10,8 +10,8 @@ export const SITE = {
   lang: "en",
   themeColor: "#efe6d2",
   email: "talk@rinsedsoap.xyz",
-  // Paste the repository URL here when it exists; the GitHub buttons stay inactive while this is empty.
-  github: "",
+  // Repository URL for the GitHub buttons (they stay inactive while this is empty).
+  github: "https://github.com/sauronium/periodic-something",
   // When the element data was last reviewed. Used for sitemap <lastmod> and dateModified.
   dataUpdated: "2026-11-14"
 };

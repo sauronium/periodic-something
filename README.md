@@ -4,7 +4,7 @@ An interactive periodic table drawn like a lab notebook. Explore all 118 element
 atom models, orbital clouds, crystal lattices, spectra, isotopes and isobars, periodic trends, chemistry
 tools and quizzes. Every element also has its own page with a written profile.
 
-**Live site:** https://periodic-something.rinsedsoap.xyz
+**Live site:** https://periodic-something.rinsedsoap.xyz · **Source:** https://github.com/sauronium/periodic-something
 
 Built with [Astro](https://astro.build). Pages are pre-rendered static HTML; a single server route handles the
 contact form.
