@@ -357,12 +357,12 @@ a.btn { display: inline-flex; align-items: center; height: 34px; color: inherit;
 .intro { display: grid; gap: 10px; padding: 20px 22px 22px 54px; }
 .intro h2, .article h2, .hub h2 { font: 700 1.9rem/1.1 var(--f-hand); margin: 10px 0 0; }
 .intro p, .article p { margin: 0; max-width: 75ch; font-size: 16px; }
-.features { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px 22px; margin: 4px 0 0; padding: 0; list-style: none; }
+.features { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 10px 22px; margin: 4px 0 0; padding: 0; list-style: none; }
 .features li { font-size: 15px; } .features b { font: 700 1.25rem var(--f-hand); display: block; }
 .article { display: grid; gap: 12px; padding: 24px 24px 26px 54px; }
 .article h1 { font: 700 clamp(2.2rem, 5vw, 3.2rem)/1 var(--f-hand); margin: 0; }
 .article .lede { font-size: 18px; }
-.article .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0 22px; margin: 4px 0; }
+.article .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 0 22px; margin: 4px 0; }
 .article .facts > div { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1.3px dashed var(--line); }
 .article .facts dt { color: var(--ink-2); font-size: 14px; } .article .facts dd { margin: 0; font: 400 13px var(--f-mono); text-align: right; }
 .related { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
@@ -379,7 +379,7 @@ a.btn { display: inline-flex; align-items: center; height: 34px; color: inherit;
 .eindex { display: grid; gap: 14px; }
 .eindex h3 { font: 700 1.35rem/1 var(--f-hand); margin: 6px 0 6px; }
 .eindex ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.hublist { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px 20px; list-style: none; margin: 0; padding: 0; }
+.hublist { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 10px 20px; list-style: none; margin: 0; padding: 0; }
 .hublist li { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: start; padding: 6px 0; border-bottom: 1.3px dashed var(--line); }
 .hublist .chipsym { grid-row: span 2; min-width: 40px; height: 40px; font-size: 1.4rem; }
 .hublist a { color: inherit; font: 700 1.2rem/1.1 var(--f-hand); }

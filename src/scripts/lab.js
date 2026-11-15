@@ -1052,6 +1052,12 @@ const Scene3D = (() => {
       node.dataset.t = Math.round(t) + (what === "melts" ? 1 : 1);
     };
     pos(m, el.melt, "melts"); pos(b, el.boil, "boils");
+    // when the two points are close on a short slider, push the markers apart so they never overlap
+    const trk = m.parentElement, w = trk.clientWidth - 17, gap = 20;
+    if (!m.hidden && !b.hidden && w > 0) {
+      let mx = el.melt / 6000 * w + 8.5, bx = el.boil / 6000 * w + 8.5;
+      if (bx - mx < gap) { bx = mx + gap; if (bx > w + 8.5) { bx = w + 8.5; mx = bx - gap; } m.style.left = mx + "px"; b.style.left = bx + "px"; }
+    }
   }
   const PH_X = t => Math.sqrt(clamp(t, 0, 6000) / 6000);
   const PH_T = x => Math.round(6000 * clamp(x, 0, 1) * clamp(x, 0, 1));
@@ -1925,9 +1931,12 @@ const Scene3D = (() => {
   let tableDoodle = null, stageDoodle = null;
   function setDraw(on) {
     Draw.on = on; document.body.classList.toggle("drawing", on);
-    $("drawbar").hidden = !on; $("drawbtn").setAttribute("aria-pressed", String(on));
+    // the toolbar docks into the page under the table controls, so it never covers anything
+    const bar = $("drawbar"), ctl = document.querySelector(".labctl");
+    if (on && ctl && bar.previousElementSibling !== ctl) { ctl.after(bar); bar.classList.add("docked"); }
+    bar.hidden = !on; $("drawbtn").setAttribute("aria-pressed", String(on));
+    const pd = $("pdone"); if (pd) pd.hidden = !on;
     tableDoodle.setActive(on); stageDoodle.setActive(on);
-    if (on) toast("Draw on the table or on the drawing. Press Done when finished.");
   }
 
   /* ----- Share links: state lives in the URL hash ----- */
@@ -2066,6 +2075,7 @@ const Scene3D = (() => {
     $("simnext").addEventListener("click", () => select(S.sel === 118 ? 1 : S.sel + 1));
     $("simmodal").addEventListener("close", () => { if (simHome) setMax(false); });
     document.querySelectorAll(".tmark").forEach(mk => mk.addEventListener("click", () => setTemp(clamp(+mk.dataset.t, 0, 6000))));
+    new ResizeObserver(() => updateTempMarks()).observe($("tm-melt").parentElement);
     // phase strip: click or drag to set the temperature, arrow keys to nudge it
     const pb = $("phasebar"); let pdrag = false;
     const pset = e => { const r = pb.getBoundingClientRect(); setTemp(PH_T((e.clientX - r.left) / r.width)); };
@@ -2111,6 +2121,7 @@ const Scene3D = (() => {
     $("dundo").addEventListener("click", () => { if (!(Draw.last && Draw.last.undo())) { if (!stageDoodle.undo()) tableDoodle.undo(); } });
     $("dclear").addEventListener("click", () => { if (window.confirm("Clear your drawings on the table and on this element's view?")) { tableDoodle.clear(); stageDoodle.clear(); } });
     $("ddone").addEventListener("click", () => setDraw(false));
+    $("pdone").addEventListener("click", () => setDraw(false));
     $("enote").addEventListener("input", () => {
       const v = $("enote").value; if (v.trim()) S.notes[S.sel] = v; else delete S.notes[S.sel];
       store.set("notes", S.notes); tiles[S.sel].classList.toggle("has-note", !!S.notes[S.sel]);

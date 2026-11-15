@@ -212,3 +212,58 @@ dialog.nuccmp::backdrop { background: rgba(40, 30, 10, .5); }
 .contact-done p { margin: 0 0 4px; }
 .contact-done #contact-done-more { font: 400 15px/1.4 var(--f-body); color: var(--ink); }
 @media (prefers-reduced-motion: reduce) { .logolink { transition: none; } }
+
+/* ---------- Overlap fixes (checked with an automated text/element overlap audit) ---------- */
+/* segmented buttons sit side by side instead of sharing a border */
+.segb + .segb { margin-left: 0; }
+/* the melting/boiling markers go below the slider, inside space reserved for them */
+.trk { padding-bottom: 18px; }
+.tmark { top: 25px; }
+.temp-row, .lc-temp .temp-row { padding-bottom: 0; }
+/* notebook pages never grow wider than the sheet; wide tables scroll inside their own box */
+.nb-page { grid-template-columns: minmax(0, 1fr); }
+.nb-page > * { min-width: 0; }
+
+/* comparison dialog: name cards above the canvas, colour key below it */
+.nc-viz { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; min-height: 0; min-width: 0; }
+.nc-labs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.nc-lab { position: static; max-width: none; pointer-events: auto; }
+.nc-key { position: static; background: none; padding: 0; }
+@media (max-width: 900px) { .nc-viz { grid-template-rows: auto 52vh auto; } .nc-stage { height: auto; } .nc-lab { max-width: none; } }
+/* full-screen simulation header wraps on narrow screens */
+.simmodal-head { flex-wrap: wrap; row-gap: 6px; }
+@media (max-width: 700px) {
+  .simmodal-head h2 { order: -1; flex: 1 1 100%; font-size: 1.4rem; }
+  .simmodal-head #simclose { margin-left: auto; }
+}
+/* pencil toolbar: the hint lives inside it; compact on phones; the page can scroll past it */
+.drawhint { font: 700 15px var(--f-hand); color: var(--ink-2); margin-right: 4px; }
+body.drawing { padding-bottom: 140px; }
+@media (max-width: 700px) {
+  .drawbar { left: 8px; right: 8px; bottom: 8px; transform: none; width: auto; gap: 5px; padding: 6px 8px; }
+  .drawbar .segb, .drawbar .btn { padding: 1px 8px; font-size: 14px; }
+  .drawbar .sw { width: 22px; height: 22px; }
+  .drawhint { flex: 1 1 100%; text-align: center; font-size: 14px; }
+}
+
+/* comparison dialog on narrow screens: stacked rows keep their full height (no squeezing) and the body scrolls */
+@media (max-width: 900px) {
+  .nc-body { grid-auto-rows: max-content; align-content: start; }
+  .nc-viz { min-height: auto; }
+  .nc-labs { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .nc-lab { padding: 6px 8px; }
+}
+@media (max-width: 420px) { .nc-labs { grid-template-columns: 1fr; } .nc-b { text-align: left; justify-items: start; } .nc-b .nc-badges { justify-content: flex-start; } }
+
+/* isotope / isobar tables stack on narrow screens instead of forcing a 320px column */
+.nuclists { grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); }
+
+/* pencil toolbar docked in the page (under the table controls) instead of floating over content */
+.drawbar.docked { position: static; transform: none; left: auto; right: auto; bottom: auto; width: auto; max-width: none; justify-content: flex-start; }
+body.drawing { padding-bottom: 0; }
+.pdone { padding: 2px 10px; font-size: 14px; }
+@media (max-width: 700px) { .drawbar.docked .drawhint { flex: 1 1 100%; text-align: left; } }
+
+/* sticky note: label on its own line above the text box */
+.sticky .lbl { display: block; margin-bottom: 4px; line-height: 1.2; }
+.sticky textarea { display: block; }

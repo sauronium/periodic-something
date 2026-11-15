@@ -15,10 +15,16 @@
     <button class="btn" type="button" id="ncClose" data-tip="Close the comparison (Esc)">Close</button>
   </div>
   <div class="nc-body">
-    <div class="nc-stage" id="ncStage" data-tip="Drag to turn both models · scroll to zoom">
-      <canvas id="ncGl" aria-label="3D models of the two nuclei side by side"></canvas>
-      <div class="nc-lab nc-a" id="ncA"></div>
-      <div class="nc-lab nc-b" id="ncB"></div>
+    <div class="nc-viz">
+      <!-- labels and key sit outside the canvas so they never cover the 3D models -->
+      <div class="nc-labs">
+        <div class="nc-lab nc-a" id="ncA"></div>
+        <div class="nc-lab nc-b" id="ncB"></div>
+      </div>
+      <div class="nc-stage" id="ncStage" data-tip="Drag to turn both models · scroll to zoom">
+        <canvas id="ncGl" aria-label="3D models of the two nuclei side by side"></canvas>
+        <p class="nc-fallback" id="ncFallback" hidden>3D needs WebGL, which this browser could not start. The table still shows every difference.</p>
+      </div>
       <div class="nc-key" aria-hidden="true">
         <span><i class="sd" style="background:#e5483a"></i>proton</span>
         <span><i class="sd" style="background:#9aa6b4"></i>neutron</span>
@@ -26,7 +32,6 @@
         <span><i class="sd" style="background:#ff9a1f"></i>extra proton</span>
         <span><i class="sd" style="background:#b56cff"></i>extra electron</span>
       </div>
-      <p class="nc-fallback" id="ncFallback" hidden>3D needs WebGL, which this browser could not start. The table on the right still shows every difference.</p>
     </div>
     <aside class="nc-side">
       <p class="nc-rel" id="ncRel"></p>
